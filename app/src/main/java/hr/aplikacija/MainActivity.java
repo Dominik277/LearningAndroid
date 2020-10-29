@@ -5,13 +5,20 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    public void clickMe(View view){
+    public void convertCurrency(View view){
+        Log.i("Info","Button pressed");
         EditText editText = (EditText) findViewById(R.id.editText);
-        Toast.makeText(this, "Hello " + editText.getText().toString(), Toast.LENGTH_LONG).show();
+        String amountInPounds = editText.getText().toString();
+        double amountInPoundsDouble = Double.parseDouble(amountInPounds);
+        double amountInDollarsDouble = amountInPoundsDouble * 1.3;
+        String amountInDollarsString = String.format("%.2f",amountInDollarsDouble);
+        Toast.makeText(this, "&" + amountInPounds + "is $ " + amountInDollarsString,
+                Toast.LENGTH_LONG).show();
     }
 
     @Override
