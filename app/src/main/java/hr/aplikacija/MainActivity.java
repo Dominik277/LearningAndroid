@@ -5,15 +5,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    public void login(View view){
-        EditText usernameEditText = (EditText) findViewById(R.id.usernameEditText);
-        EditText passwordEditText = (EditText) findViewById(R.id.passwordEditText);
-        Log.i("Info","Button pressed");
-        Log.i("Username", usernameEditText.getText().toString());
-        Log.i("Username", passwordEditText.getText().toString());
+    public void clickMe(View view){
+        EditText editText = (EditText) findViewById(R.id.editText);
+        Toast.makeText(this, "Hello " + editText.getText().toString(), Toast.LENGTH_LONG).show();
     }
 
     @Override
