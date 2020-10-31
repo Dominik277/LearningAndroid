@@ -2,65 +2,38 @@ package hr.aplikacija;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.util.Log;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.SeekBar;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
-    ListView timesTablesListView;
-    public void generateTimesTable(int timesTableNumber){
-        Log.i("Seekbar Value",Integer.toString(timesTableNumber));
-        ArrayList<String> timesTableContent = new ArrayList<String>();
-        for(int j= 1; j <= 10; j++){
-            timesTableContent.add(Integer.toString(j * timesTableNumber));
-        }
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
-                (this, android.R.layout.simple_list_item_1, timesTableContent);
-        timesTablesListView.setAdapter(arrayAdapter);
-    }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final SeekBar timesTablesSeekBar = findViewById(R.id.timesTablesSeekBar);
-        timesTablesListView =  findViewById(R.id.timesTablesTablesListView);
-
-        int max=20;
-        int startingPosition=5;
-        timesTablesSeekBar.setMax(max);
-        timesTablesSeekBar.setProgress(startingPosition);
-        generateTimesTable(10);
-
-        timesTablesSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                int min = 1;
-                int timesTableNumber;
-                if(i < min){
-                    timesTableNumber = min;
-                    timesTablesSeekBar.setProgress(min);
-                }else {
-                    timesTableNumber = i;
-                }
-                Log.i("Seekbar Value",Integer.toString(timesTableNumber));
-                generateTimesTable(timesTableNumber);
+        new CountDownTimer(10000,100){
+            public void onTick(long milisecondsUntilDone){
+                Log.i("Seconds left",String.valueOf(milisecondsUntilDone/100));
             }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
+        public void onFinish(){
+                Log.i("We're done!","No more countdown");
             }
+        }.start();
 
+        /*
+        Handler handler = new Handler();
+        Runnable run = new Runnable() {
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
+            public void run() {
+                Log.i("Hey it's us","A second passed by");
+                handler.postDelayed(this,1000);
             }
-        });
+        };
+        handler.post(run);
+        */
+
+
     }
 }
