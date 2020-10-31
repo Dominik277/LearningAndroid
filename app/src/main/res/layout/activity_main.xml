@@ -6,87 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <androidx.gridlayout.widget.GridLayout
+    <ListView
+        android:id="@+id/myListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:columnCount="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:rowCount="4">
-
-        <Button
-            android:id="@+id/button1"
-            android:text="Bells"
-            app:layout_gravity= "fill"
-            app:layout_rowWeight="1"
-            app:layout_columnWeight="1"
-            android:tag="bells"
-            android:onClick="playPhrase"/>
-
-        <Button
-            android:id="@+id/button2"
-            android:text="Car"
-            app:layout_gravity= "fill"
-            app:layout_rowWeight="1"
-            app:layout_columnWeight="1"
-            android:tag="car"
-            android:onClick="playPhrase"/>
-
-        <Button
-            android:id="@+id/button3"
-            android:text="Cartoon"
-            app:layout_gravity= "fill"
-            app:layout_rowWeight="1"
-            app:layout_columnWeight="1"
-            android:tag="cartoon"
-            android:onClick="playPhrase"/>
-
-        <Button
-            android:id="@+id/button4"
-            android:text="Harley"
-            app:layout_gravity= "fill"
-            app:layout_rowWeight="1"
-            app:layout_columnWeight="1"
-            android:tag="harley"
-            android:onClick="playPhrase"/>
-
-        <Button
-            android:id="@+id/button5"
-            android:text="Old car"
-            app:layout_gravity= "fill"
-            app:layout_rowWeight="1"
-            app:layout_columnWeight="1"
-            android:tag="oldcar"
-            android:onClick="playPhrase"/>
-
-        <Button
-            android:id="@+id/button6"
-            android:text="Poker"
-            app:layout_gravity= "fill"
-            app:layout_rowWeight="1"
-            app:layout_columnWeight="1"
-            android:tag="poker"
-            android:onClick="playPhrase"/>
-
-        <Button
-            android:id="@+id/button7"
-            android:text="Rain"
-            app:layout_gravity= "fill"
-            app:layout_rowWeight="1"
-            app:layout_columnWeight="1"
-            android:tag="rain"
-            android:onClick="playPhrase"/>
-
-        <Button
-            android:id="@+id/button8"
-            android:text="Tolling bell"
-            app:layout_gravity= "fill"
-            app:layout_rowWeight="1"
-            app:layout_columnWeight="1"
-            android:tag="tollingbell"
-            android:onClick="playPhrase"/>
-
-    </androidx.gridlayout.widget.GridLayout>
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
