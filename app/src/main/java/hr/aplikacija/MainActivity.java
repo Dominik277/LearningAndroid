@@ -2,56 +2,47 @@ package hr.aplikacija;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
 
-import java.io.InputStream;
-import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
-    ImageView imageView;
-    public void downloadImage(View view){
-        ImageDownloader task = new ImageDownloader();
-        Bitmap myImage;
-        try {
-            myImage = task.execute("https://upload.wikimedia.org/wikipedia/en/a/aa/Bart_Simpson_200px.png").get();
-            imageView.setImageBitmap(myImage);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        imageView = findViewById(R.id.imageView);
-    }
-    public class ImageDownloader extends AsyncTask<String,Void, Bitmap>{
-
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            try {
-                URL url = new URL(urls{0})
-                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-                connection.connect();
-                InputStream in = connection.getInputStream();
-                Bitmap myBitmap = BitmapFactory.decodeStream(in);
-                return myBitmap;
-            }catch (Exception e){
-                e.printStackTrace();
-                return null;
-            }
+        SharedPreferences sharedPreferences = this
+                .getSharedPreferences("hr.aplikacija", Context.MODE_PRIVATE);
+        /*
+        ArrayList<String> friends = new ArrayList<>();
+        friends.add("Fido");
+        friends.add("Sarah");
+        friends.add("Jones");
+        try {
+            sharedPreferences.edit().putString
+                    ("friends",ObjectSerializer.serialize(friends)).apply();
+            Log.i("friends",ObjectSerializer.serialize(friends));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        */
+        ArrayList<String> newFriends = new ArrayList<>();
+        try {
+            newFriends = (ArrayList<String>) ObjectSerializer
+                    .deserialize(sharedPreferences
+                            .getString("friends",ObjectSerializer.serialize(new ArrayList<String>())));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Log.i("new Friends",newFriends.toString());
+        //sharedPreferences.edit().putString("Username","Nick").apply();
+        //String username = sharedPreferences.getString("Username","");
+        //Log.i("This is the username!",username);
     }
 }
