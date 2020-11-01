@@ -2,9 +2,8 @@ package hr.aplikacija;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.os.Handler;
-import android.util.Log;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -13,26 +12,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new CountDownTimer(10000,100){
-            public void onTick(long milisecondsUntilDone){
-                Log.i("Seconds left",String.valueOf(milisecondsUntilDone/100));
-            }
-        public void onFinish(){
-                Log.i("We're done!","No more countdown");
-            }
-        }.start();
+        SeekBar timerSeekBar = findViewById(R.id.timerSeekBar);
+        TextView timTextView = findViewById(R.id.countdownTextView);
 
-        /*
-        Handler handler = new Handler();
-        Runnable run = new Runnable() {
+        timerSeekBar.setMax(600);
+        timerSeekBar.setProgress(30);
+        timerSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void run() {
-                Log.i("Hey it's us","A second passed by");
-                handler.postDelayed(this,1000);
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                int minutes = i / 60;
+                int seconds = i - (minutes * 60);
+
+                timTextView.setText(Integer.toString(minutes) + ":" + Integer.toString(seconds));
             }
-        };
-        handler.post(run);
-        */
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
 
     }
