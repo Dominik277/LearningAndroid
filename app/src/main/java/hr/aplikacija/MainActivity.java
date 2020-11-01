@@ -3,18 +3,14 @@ package hr.aplikacija;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView textView;
+    Button goButton;
 
-    public void show(View view){
-        textView.setVisibility(View.VISIBLE);
-    }
-
-    public void hide(View view){
-        textView.setVisibility(View.INVISIBLE);
+    public void start(View view){
+        goButton.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -22,6 +18,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView = findViewById(R.id.textViewThang);
+        goButton = findViewById(R.id.goButton);
     }
 }
