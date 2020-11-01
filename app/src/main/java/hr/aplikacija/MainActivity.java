@@ -2,13 +2,10 @@ package hr.aplikacija;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
-
-import java.io.IOException;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,32 +14,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SharedPreferences sharedPreferences = this
-                .getSharedPreferences("hr.aplikacija", Context.MODE_PRIVATE);
-        /*
-        ArrayList<String> friends = new ArrayList<>();
-        friends.add("Fido");
-        friends.add("Sarah");
-        friends.add("Jones");
         try {
-            sharedPreferences.edit().putString
-                    ("friends",ObjectSerializer.serialize(friends)).apply();
-            Log.i("friends",ObjectSerializer.serialize(friends));
-        } catch (Exception e) {
+            SQLiteDatabase sqLiteDatabase = this.openOrCreateDatabase("Events",MODE_PRIVATE,null);
+            sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS events (name VARCHAR, year INT(4))");
+            sqLiteDatabase.execSQL("INSERT INTO events (name,year) VALUES ('Millenium',2000)");
+            sqLiteDatabase.execSQL("INSERT INTO events (name,year) VALUES ('Nick teching',2014)");
+
+            Cursor c = sqLiteDatabase.rawQuery("SELECT * FROM events",null);
+            int nameIndex = c.getColumnIndex("name");
+            int yearIndex = c.getColumnIndex("year");
+
+            c.moveToFirst();
+
+            while (!c.isAfterLast()){
+                Log.i("Results-event",c.getString(nameIndex));
+                Log.i("Results-year",Integer.toString(c.getInt(yearIndex)));
+            }
+
+            c.moveToNext();
+
+        }catch (Exception e){
             e.printStackTrace();
         }
-        */
-        ArrayList<String> newFriends = new ArrayList<>();
-        try {
-            newFriends = (ArrayList<String>) ObjectSerializer
-                    .deserialize(sharedPreferences
-                            .getString("friends",ObjectSerializer.serialize(new ArrayList<String>())));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Log.i("new Friends",newFriends.toString());
-        //sharedPreferences.edit().putString("Username","Nick").apply();
-        //String username = sharedPreferences.getString("Username","");
-        //Log.i("This is the username!",username);
     }
 }
