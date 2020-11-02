@@ -6,8 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -15,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +32,16 @@ public class MainActivity extends AppCompatActivity {
     Button button1;
     Button button2;
     Button button3;
+
+    public void celebChosen(View view){
+        if(view.getTag().toString().equals(Integer.toString(locationOfCorrectAnswer))){
+            Toast.makeText(getApplicationContext(),"Tocno!",Toast.LENGTH_SHORT).show();
+        }else {
+            Toast.makeText(getApplicationContext(),"Krivo! It was "
+                    + celebNames.get(choosenCeleb),Toast.LENGTH_SHORT).show();
+        }
+        newQuestion();
+    }
 
     public class ImageDownloader extends AsyncTask<String, Void, Bitmap>{
 
@@ -76,6 +88,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void newQuestion(){
+        try {
+            Random rand = new Random();
+            choosenCeleb = rand.nextInt(celebURLs.size());
+            ImageDownloader imageTask = new ImageDownloader();
+            Bitmap celebImage = imageTask.execute(celebURLs.get(choosenCeleb)).get();
+            imageView.setImageBitmap(celebImage);
+            locationOfCorrectAnswer = rand.nextInt(4);
+            int incorectAnswerLocation;
+            for (int i = 0; i < 4; i++) {
+                if (i == locationOfCorrectAnswer) {
+                    answers[i] = celebNames.get(choosenCeleb);
+                } else {
+                    incorectAnswerLocation = rand.nextInt(celebURLs.size());
+                    while (incorectAnswerLocation == choosenCeleb) {
+                        incorectAnswerLocation = rand.nextInt(celebURLs.size());
+                    }
+                    answers[i] = celebNames.get(incorectAnswerLocation);
+                }
+            }
+            button0.setText(answers[0]);
+            button1.setText(answers[1]);
+            button2.setText(answers[2]);
+            button3.setText(answers[3]);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,29 +148,7 @@ public class MainActivity extends AppCompatActivity {
             while (m.find()){
                 celebNames.add(m.group(1));
             }
-
-            Random rand = new Random();
-            choosenCeleb = rand.nextInt(celebURLs.size());
-            ImageDownloader imageTask = new ImageDownloader();
-            Bitmap celebImage = imageTask.execute(celebURLs.get(choosenCeleb)).get();
-            imageView.setImageBitmap(celebImage);
-            locationOfCorrectAnswer = rand.nextInt(4);
-            int incorectAnswerLocation;
-            for (int i = 0; i<4; i++){
-                if (i == locationOfCorrectAnswer){
-                    answers[i] = celebNames.get(choosenCeleb);
-                }else {
-                    incorectAnswerLocation = rand.nextInt(celebURLs.size());
-                    while (incorectAnswerLocation == choosenCeleb){
-                        incorectAnswerLocation = rand.nextInt(celebURLs.size());
-                    }
-                    answers[i] = celebNames.get(incorectAnswerLocation);
-                }
-            }
-            button0.setText(answers[0]);
-            button1.setText(answers[1]);
-            button2.setText(answers[2]);
-            button3.setText(answers[3]);
+            newQuestion();
         }catch (Exception e){
             e.printStackTrace();
         }
