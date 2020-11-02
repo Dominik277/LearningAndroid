@@ -6,6 +6,10 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -43,7 +47,19 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Log.i("JSON",s);
+            try {
+                JSONObject jsonObject = new JSONObject(s);
+                String weatherInfo = jsonObject.getString("weather");
+                Log.i("Weather content",weatherInfo);
+                JSONArray arr = new JSONArray(weatherInfo);
+                for (int i=0; i<arr.length(); i++){
+                    JSONObject jsonPart = arr.getJSONObject(i);
+                    Log.i("main",jsonPart.getString("main"));
+                    Log.i("description",jsonPart.getString("description"));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -51,5 +67,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        DownloadTask task = new DownloadTask();
+        task.execute("");
     }
 }
