@@ -2,12 +2,17 @@ package hr.aplikacija;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.ImageView;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,6 +22,32 @@ public class MainActivity extends AppCompatActivity {
 
     ArrayList<String> celebURLs = new ArrayList<String>();
     ArrayList<String> celebNames = new ArrayList<String>();
+    int choosenCeleb = 0;
+    String[] answers = new String[4];
+    int locationOfCorrectAnswer = 0;
+    ImageView imageView;
+    Button button0;
+    Button button1;
+    Button button2;
+    Button button3;
+
+    public class ImageDownloader extends AsyncTask<String, Void, Bitmap>{
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+            try {
+                URL url = new URL(urls[0]);
+                HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+                connection.connect();
+                InputStream inputStream = connection.getInputStream();
+                Bitmap myBitmap = BitmapFactory.decodeStream(inputStream);
+                return myBitmap;
+            }catch (Exception e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+    }
 
     public class DownloadTask extends AsyncTask<String, Void, String>{
 
@@ -50,26 +81,55 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        imageView = findViewById(R.id.imageView);
+        button0 = findViewById(R.id.button0);
+        button1 = findViewById(R.id.button1);
+        button2 = findViewById(R.id.button2);
+        button3 = findViewById(R.id.button3);
+
         DownloadTask task = new DownloadTask();
         String result = null;
         try {
             task.execute("https://www.imdb.com/list/ls052283250/").get();
-            String[] splitResult = result.split("<a href=\"/name/nm0000136/?ref_=nmls_pst\">");
+            String[] splitResult = result.split("<a href=\"/name/nm0000230/?ref_=nmls_pst\"\n" +
+                    ">");
 
             Pattern p = Pattern.compile("img.src=\"(.*?)\"");
             Matcher m = p.matcher(splitResult[0]);
 
             while (m.find()){
-                System.out.println(m.group(1));
+                celebURLs.add(m.group(1));
             }
 
             p = Pattern.compile("alt=\"(.*?)\"");
             m = p.matcher(splitResult[0]);
 
             while (m.find()){
-                System.out.println(m.group(1));
+                celebNames.add(m.group(1));
             }
 
+            Random rand = new Random();
+            choosenCeleb = rand.nextInt(celebURLs.size());
+            ImageDownloader imageTask = new ImageDownloader();
+            Bitmap celebImage = imageTask.execute(celebURLs.get(choosenCeleb)).get();
+            imageView.setImageBitmap(celebImage);
+            locationOfCorrectAnswer = rand.nextInt(4);
+            int incorectAnswerLocation;
+            for (int i = 0; i<4; i++){
+                if (i == locationOfCorrectAnswer){
+                    answers[i] = celebNames.get(choosenCeleb);
+                }else {
+                    incorectAnswerLocation = rand.nextInt(celebURLs.size());
+                    while (incorectAnswerLocation == choosenCeleb){
+                        incorectAnswerLocation = rand.nextInt(celebURLs.size());
+                    }
+                    answers[i] = celebNames.get(incorectAnswerLocation);
+                }
+            }
+            button0.setText(answers[0]);
+            button1.setText(answers[1]);
+            button2.setText(answers[2]);
+            button3.setText(answers[3]);
         }catch (Exception e){
             e.printStackTrace();
         }
