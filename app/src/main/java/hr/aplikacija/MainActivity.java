@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-
 public class MainActivity extends AppCompatActivity {
 
     ListView listView;
@@ -28,12 +27,24 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
           String action = intent.getAction();
           Log.i("Action",action);
+          if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
+              statusTextView.setText("Finished!");
+              searchButton.setEnabled(true);
+          }else if (BluetoothDevice.ACTION_FOUND.equals(action)){
+              BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+              String name = device.getName();
+              String adress = device.getAddress();
+              String rssi = Integer.toString(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE));
+              Log.i("Device Found!","Name: " + name + " Adress: " + adress + " RSSI: " + rssi);
+
+          }
         }
     };
 
     public void searchClicked(View view){
         statusTextView.setText("Searching...");
         searchButton.setEnabled(false);
+        bluetoothAdapter.startDiscovery();
     }
 
     @Override
@@ -51,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
         intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         registerReceiver(broadcastReceiver,intentFilter);
-        bluetoothAdapter.startDiscovery();
+
 
 
     }
