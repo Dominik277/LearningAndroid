@@ -1,20 +1,38 @@
 package hr.aplikacija;
 
-import androidx.annotation.RequiresApi;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.res.Configuration;
-import android.os.Build;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.util.Log;
 
 public class MainActivity extends AppCompatActivity {
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    public void goPip(View view){
-        enterPictureInPictureMode();
+    LocationManager locationManager;
+    LocationListener locationListener;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission
+                        (this, Manifest
+                                .permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                locationManager.requestLocationUpdates
+                        (LocationManager.GPS_PROVIDER
+                                , 0
+                                , 0,
+                                locationListener);
+            }
+        }
     }
 
     @Override
@@ -22,21 +40,40 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-    }
+        locationManager = (LocationManager) this
+                .getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                Log.i("Location",location.toString());
+            }
 
-    @Override
-    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
-        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
-        TextView textView = findViewById(R.id.textView);
-        Button pipButton = findViewById(R.id.pipButton);
-        if (isInPictureInPictureMode){
-            pipButton.setVisibility(View.INVISIBLE);
-            getSupportActionBar().hide();
-            textView.setText("$10,42");
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(@NonNull String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(@NonNull String provider) {
+
+            }
+        };
+        if(ContextCompat.checkSelfPermission
+                (this, Manifest
+                        .permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this
+                    ,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
         }else {
-            pipButton.setVisibility(View.VISIBLE);
-            getSupportActionBar().show();
-            textView.setText("Hello World");
+            locationManager.requestLocationUpdates
+                    (LocationManager.GPS_PROVIDER
+                            , 0
+                            , 0,
+                            locationListener);
         }
     }
 }
