@@ -8,6 +8,8 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.json.JSONArray;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -57,6 +59,30 @@ public class MainActivity extends AppCompatActivity {
                     char current = (char) data;
                     result += current;
                     data = inputStreamReader.read();
+                }
+
+                JSONArray jsonArray = new JSONArray(result);
+                int numberOfItems = 20;
+                if (jsonArray.length() < 20){
+                    numberOfItems = jsonArray.length();
+                }
+                for (int i=0; i<numberOfItems; i++){
+                    String articleId = jsonArray.getString(i);
+                    url = new URL("https://hacker-news.firebaseio.com/v0/item/"
+                            + articleId + ".json?print=pretty");
+                    urlConnection = (HttpsURLConnection) url.openConnection();
+
+                    inputStream = urlConnection.getInputStream();
+                    inputStreamReader = new InputStreamReader(inputStream);
+                    data = inputStream.read();
+                    String articleInfo = "";
+
+                    while (data != -1){
+                        char current = (char) data;
+                        articleInfo += current;
+                        data = inputStreamReader.read();
+                    }
+                    Log.i("Article Info",articleInfo);
                 }
                 Log.i("URL Content",result);
                 return result;
