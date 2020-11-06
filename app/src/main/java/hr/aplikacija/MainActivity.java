@@ -1,23 +1,42 @@
 package hr.aplikacija;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void goPip(View view){
+        enterPictureInPictureMode();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        AutoCompleteTextView autoCompleteTextView = findViewById(R.id.autoCompleteTextView);
+    }
 
-        String[] friends = {"Nick","Rick","Sarah","James","Nina","Noel","Nire"};
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>
-                (this, android.R.layout.simple_list_item_1,friends);
-        autoCompleteTextView.setAdapter(arrayAdapter);
-        autoCompleteTextView.setThreshold(1);
+    @Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
+        TextView textView = findViewById(R.id.textView);
+        Button pipButton = findViewById(R.id.pipButton);
+        if (isInPictureInPictureMode){
+            pipButton.setVisibility(View.INVISIBLE);
+            getSupportActionBar().hide();
+            textView.setText("$10,42");
+        }else {
+            pipButton.setVisibility(View.VISIBLE);
+            getSupportActionBar().show();
+            textView.setText("Hello World");
+        }
     }
 }
