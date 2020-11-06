@@ -2,12 +2,15 @@ package hr.aplikacija;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -37,10 +40,9 @@ public class MainActivity extends AppCompatActivity {
         articlesDB.execSQL("CREATE TABLE IF NOT EXISTS articles " +
                 "(id INTEGER PRIMARY KEY, articlesId INTEGER, title VARCHAR, content VARCHAR)");
 
-
         DownloadTask task = new DownloadTask();
         try {
-            task.execute("https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty");
+            //task.execute("https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty");
         }catch (Exception e){
 
         }
@@ -49,6 +51,15 @@ public class MainActivity extends AppCompatActivity {
         arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,titles);
         listView.setAdapter(arrayAdapter);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int i, long l) {
+                Intent intent = new Intent(getApplicationContext(),ArticleActivity.class);
+                intent.putExtra("content",content.get(i));
+                startActivity(intent);
+            }
+        });
+        updateListView();
     }
 
     public void  updateListView(){
@@ -61,10 +72,10 @@ public class MainActivity extends AppCompatActivity {
             do{
                 titles.add(c.getString(titleIndex));
                 content.add(c.getString(contentIndex));
-            }while (c.moveToFirst()){
-                arrayAdapter.notifyDataSetChanged();
-            }
-        }
+            }while (c.moveToNext());
+            arrayAdapter.notifyDataSetChanged();
+
+    }
     }
 
     public class DownloadTask extends AsyncTask<String, Void, String>{
@@ -142,6 +153,12 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            updateListView();
         }
     }
 }
